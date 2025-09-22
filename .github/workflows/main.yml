@@ -1,0 +1,46 @@
+name: Deploy HRMS Frontend to Production
+
+on:
+  push:
+    branches:
+      - dev
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy HRMS Frontend
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Copy Frontend Code to Server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          port: 22
+          source: "./"
+          target: "/var/www/hrms/frontend"
+          strip_components: 1
+          overwrite: true
+
+      - name: Build & Restart Frontend on Server
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          port: 22
+          script: |
+            cd /var/www/hrms/frontend
+            npm install --omit=dev
+            npm run build
+            npm install -g pm2
+            pm2 restart hrms-frontend || pm2 start ecosystem.config.js --name hrms-frontend
+            echo "✅ HRMS Frontend deployment completed successfully"

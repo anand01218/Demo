@@ -1,0 +1,8 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Run lint-staged for comprehensive checks
+echo "🔍 Running lint-staged..."
+npx lint-staged
+
+echo "✨ Pre-commit checks completed successfully!"
