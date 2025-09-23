@@ -208,14 +208,7 @@ const AddCandidateModal: React.FC<AddCandidateModalProps> = ({
           disabled={isSubmitting || isLoading}
           className="px-4 py-2 bg-blue-600 transition-color hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 text-white rounded-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
         >
-          {isSubmitting ? (
-            <>
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-              Adding...
-            </>
-          ) : (
-            "Add Candidate"
-          )}
+          {isSubmitting ? <>Adding...</> : "Add Candidate"}
         </button>
       )}
     >

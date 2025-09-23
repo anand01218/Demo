@@ -11,8 +11,6 @@ import ViewNotesModal from "./FormModel/ViewNotesModal";
 import Header from "@/components/common/Header";
 import { useModale } from "@/context/ModaleContext";
 
-import { useGetRecruitmentStageQuery } from "@/redux/slices/recruitmentAction";
-
 const RecruitmentMainArea = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showEmailModal, setShowEmailModal] = useState(false);

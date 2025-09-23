@@ -98,7 +98,6 @@ type TableColumn<T> = {
 };
 
 const columns = (
-  // eslint-disable-next-line no-unused-vars -- Function signature requires parameter name
   handleEdit: (record: AttendanceRecord) => void
 ): TableColumn<AttendanceRecord>[] => [
   {
@@ -137,7 +136,7 @@ const columns = (
   {
     key: "action",
     label: "Action",
-    render: (_, row) => (
+    render: (_unused, row) => (
       <div className="py-2 flex gap-2">
         <button className="text-red-600 hover:bg-red-50 rounded-lg transition-colors">
           <i className="fa-solid fa-trash" />
