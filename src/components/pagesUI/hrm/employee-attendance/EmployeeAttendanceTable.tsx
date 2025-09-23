@@ -253,12 +253,12 @@ const EmployeeAttendanceTable = () => {
     return `${hours.padStart(2, "0")}:${minutes}`;
   };
 
-  const handleEdit = (record: AttendanceRecord) => {
-    setSelectedRecord(record);
+  const handleEdit = (_record: AttendanceRecord) => {
+    setSelectedRecord(_record);
     setUpdateData({
-      checkIn: convertTo24Hour(record.checkIn),
-      checkOut: convertTo24Hour(record.checkOut),
-      status: record.status,
+      checkIn: convertTo24Hour(_record.checkIn),
+      checkOut: convertTo24Hour(_record.checkOut),
+      status: _record.status,
     });
     setShowUpdateModal(true);
   };
