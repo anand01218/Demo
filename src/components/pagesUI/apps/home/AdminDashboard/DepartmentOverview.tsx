@@ -102,7 +102,7 @@ const DepartmentOverview = () => {
                             </span>
                           </div>
                         </div>
-                        <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2 xs:h-2.5 sm:h-2 md:h-2.5 lg:h-1 overflow-hidden">
+                        <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-1 overflow-hidden">
                           <div
                             className={`h-full ${color.bg} transition-all duration-700 ease-out shadow-sm`}
                             style={{ width: `${dept.percentage}%` }}

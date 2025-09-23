@@ -41,6 +41,8 @@ const SignInBasicForm = () => {
         password: data.password,
       }).unwrap();
 
+      // console.log("Login Success:", result);
+
       // Handle remember me functionality
       if (data.rememberMe) {
         localStorage.setItem(
@@ -57,20 +59,41 @@ const SignInBasicForm = () => {
       // Save user info to local storage
       localStorage.setItem("userInfo", JSON.stringify(result.user));
 
-      // Server sets access_token cookie automatically, just store user info
+      // Update Redux state with user information
       dispatch(
         setCredentials({
           user: result.user,
-          token: "server_cookie", // Placeholder since token is in HTTP-only cookie
+          token: result.access_token || "server_cookie",
+          role: result.user?.role,
+          permissions: result.user?.permissions || [],
         })
       );
 
-      toast.success("Sign In successfully");
-      router.push("/");
+      toast.success("Login successful!");
+
+      // Navigate to dashboard
+      router.replace("/");
     } catch (error: any) {
-      toast.error(error?.data?.message || "Login failed!");
+      // console.error("Login Error:", error);
+
+      // Handle different types of errors
+      let errorMessage = "Login failed!";
+
+      if (error?.status === 401) {
+        errorMessage = "Invalid email or password";
+      } else if (error?.status === 500) {
+        errorMessage = "Server error. Please try again later.";
+      } else {
+        errorMessage =
+          error?.data?.message ||
+          error?.message ||
+          "An unexpected error occurred.";
+      }
+
+      toast.error(errorMessage);
     }
   };
+
   //password visibility handle
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
@@ -78,7 +101,7 @@ const SignInBasicForm = () => {
 
   return (
     <>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} noValidate>
         <div className="from__input-box">
           <div className="form__input-title">
             <label htmlFor="nameEmail">Email or Username</label>
@@ -123,9 +146,7 @@ const SignInBasicForm = () => {
           <FormControlLabel
             control={
               <Checkbox
-                {...register("rememberMe", {
-                  required: "You must check 'Remember Me' to proceed",
-                })}
+                {...register("rememberMe")}
                 sx={{
                   "&.Mui-checked": {
                     color: "#2563eb",
@@ -139,7 +160,6 @@ const SignInBasicForm = () => {
               </span>
             }
           />
-          <ErrorMessage error={errors.rememberMe} />
         </div>
         <div className="mb-4">
           <button

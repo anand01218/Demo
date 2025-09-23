@@ -12,13 +12,18 @@ const baseQuery = fetchBaseQuery({
 
 const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
   const result = await baseQuery(args, api, extraOptions);
+
   if (result.error?.status === 401) {
+    // Clear auth state
     api.dispatch(logout());
+
+    // Only redirect if we're in browser environment and not already on login page
     if (typeof window !== "undefined") {
-      // toast.error("Unauthorized Access Please Login Again");
-      setTimeout(() => {
-        window.location.href = "/auth/login";
-      }, 600);
+      const currentPath = window.location.pathname;
+      if (!currentPath.includes("/auth/login")) {
+        // Use Next.js router for navigation instead of window.location
+        window.history.replaceState(null, "", "/auth/login");
+      }
     }
   }
 

@@ -10,9 +10,7 @@ interface AuthWrapperProps {
 }
 
 const AuthWrapper = ({ children }: AuthWrapperProps) => {
-  const { isAuthenticated, token } = useSelector(
-    (state: RootState) => state.auth
-  );
+  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
   const router = useRouter();
   const pathname = usePathname();
   const [isInitialLoad, setIsInitialLoad] = useState(true);
@@ -25,55 +23,30 @@ const AuthWrapper = ({ children }: AuthWrapperProps) => {
   ];
   const isPublicRoute = publicRoutes.includes(pathname);
 
-  // Allow initial load to complete before making auth decisions
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsInitialLoad(false);
-    }, 100);
-    return () => clearTimeout(timer);
+    // Set initial load to false after hydration
+    setIsInitialLoad(false);
   }, []);
 
   useEffect(() => {
-    // Don't redirect during initial load or if already on correct route type
+    // Wait for initial load to complete to avoid hydration issues
     if (isInitialLoad) return;
 
-    // console.log("AuthWrapper - Auth State:", { isAuthenticated, token, pathname });
-
-    // Only redirect if user is authenticated and on public route
+    // If authenticated and trying to access public routes, redirect to dashboard
     if (isAuthenticated && isPublicRoute) {
-      // console.log("Redirecting authenticated user away from public route");
-      router.push("/");
+      router.replace("/");
       return;
     }
 
-    // Only redirect to login if user is not authenticated, not on public route, and no token
-    if (!isAuthenticated && !isPublicRoute && !token) {
-      // console.log("Redirecting unauthenticated user to login");
-      router.push("/auth/login");
+    // If not authenticated and trying to access protected routes, redirect to login
+    if (!isAuthenticated && !isPublicRoute) {
+      router.replace("/auth/login");
       return;
     }
-  }, [isAuthenticated, isPublicRoute, router, pathname, token, isInitialLoad]);
+  }, [isAuthenticated, isPublicRoute, router, pathname, isInitialLoad]);
 
-  // Show loading only during initial load and when redirecting authenticated users away from public routes
+  // Show loading during initial hydration to prevent flash
   if (isInitialLoad) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Preloader />
-      </div>
-    );
-  }
-
-  // Show loading when authenticated user is on public route (will redirect)
-  if (isAuthenticated && isPublicRoute) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Preloader />
-      </div>
-    );
-  }
-
-  // For unauthenticated users on protected routes, show loading while redirect happens
-  if (!isAuthenticated && !isPublicRoute && !token) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Preloader />

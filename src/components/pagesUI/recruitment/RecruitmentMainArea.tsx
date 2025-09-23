@@ -3,12 +3,15 @@ import Breadcrumb from "@/common/Breadcrumb/breadcrumb";
 import React, { useState } from "react";
 import { Search } from "lucide-react";
 import CandidateGridView from "./CandidateGridView";
-import AddCandidateModal from "./AddCandidateModal";
-import EmailModal from "./EmailModal";
-import NoteModal from "./NoteModal";
-import ViewNotesModal from "./ViewNotesModal";
+import AddCandidateModal from "./FormModel/AddCandidateModal";
+import AddStageModal from "./FormModel/AddStageModal";
+import EmailModal from "./FormModel/EmailModal";
+import NoteModal from "./FormModel/NoteModal";
+import ViewNotesModal from "./FormModel/ViewNotesModal";
 import Header from "@/components/common/Header";
 import { useModale } from "@/context/ModaleContext";
+
+import { useGetRecruitmentStageQuery } from "@/redux/slices/recruitmentAction";
 
 const RecruitmentMainArea = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -18,7 +21,6 @@ const RecruitmentMainArea = () => {
   const [selectedCandidate, setSelectedCandidate] = useState<any>(null);
   // eslint-disable-next-line no-unused-vars
   const [selectedStageId, setSelectedStageId] = useState<string>("");
-
   const { modaleShow } = useModale();
 
   const handleEmailCandidate = (candidate: any) => {
@@ -51,15 +53,15 @@ const RecruitmentMainArea = () => {
 
         <div className="bg-white border border-gray-200 dark:border-gray-600 shadow-lg dark:bg-gray-800 rounded-sm overflow-hidden">
           {/* Enhanced Header */}
-          <div className="bg-white dark:from-gray-800 dark:to-gray-700 px-6 py-2 border-b border-gray-200 dark:border-gray-600">
-            <div className="flex items-center justify-between">
+          <div className="bg-white dark:bg-gray-800 px-6 py-2 border-b border-gray-200 dark:border-gray-600">
+            <div className="flex items-center bg-white dark:bg-gray-800 justify-between">
               <div className="flex items-center space-x-4">
                 <div>
                   <Header title="Recruitment Dashboard" />
                 </div>
               </div>
 
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
                 <div className="relative">
                   <Search
                     className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
@@ -80,39 +82,27 @@ const RecruitmentMainArea = () => {
                 >
                   Add Candidate
                 </button>
+                <button
+                  onClick={() => modaleShow("add-stage-modal")}
+                  className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-600 transition-all duration-200 shadow-sm hover:shadow-md"
+                  title="Add Stage"
+                >
+                  Add Stage
+                </button>
               </div>
             </div>
           </div>
 
           {/* Main Content */}
-          <div className="p-4">
-            <div className="flex gap-4">
-              <div className="flex-1 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-600 overflow-hidden">
-                <CandidateGridView
-                  searchTerm={searchTerm}
-                  onEmailCandidate={handleEmailCandidate}
-                  onAddNote={handleAddNote}
-                  onViewNotes={handleViewNotes}
-                  onViewResume={handleViewResume}
-                />
-                {/* {viewMode === "table" ? (
-                    <CandidateTableView
-                      searchTerm={searchTerm}
-                      onEmailCandidate={handleEmailCandidate}
-                      onAddNote={handleAddNote}
-                      onViewNotes={handleViewNotes}
-                      onViewResume={handleViewResume}
-                    />
-                  ) : (
-                    <CandidateGridView
-                      searchTerm={searchTerm}
-                      onEmailCandidate={handleEmailCandidate}
-                      onAddNote={handleAddNote}
-                      onViewNotes={handleViewNotes}
-                      onViewResume={handleViewResume}
-                    />
-                  )} */}
-              </div>
+          <div className="flex h-full gap-4">
+            <div className="flex-1 bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-600 overflow-hidden">
+              <CandidateGridView
+                searchTerm={searchTerm}
+                onEmailCandidate={handleEmailCandidate}
+                onAddNote={handleAddNote}
+                onViewNotes={handleViewNotes}
+                onViewResume={handleViewResume}
+              />
             </div>
           </div>
         </div>
@@ -120,6 +110,7 @@ const RecruitmentMainArea = () => {
 
       {/* Modals */}
       <AddCandidateModal stageId={selectedStageId} />
+      <AddStageModal />
 
       <EmailModal
         open={showEmailModal}

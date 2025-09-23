@@ -32,13 +32,14 @@ export const authSlice = createSlice({
         permissions?: string[];
       }>
     ) => {
-      state.user = action.payload.user;
-      state.token = action.payload.token;
+      const { user, token, role, permissions } = action.payload;
+
+      state.user = user;
+      state.token = token;
       state.isAuthenticated = true;
       state.isLoading = false;
-      state.role = action.payload.role || null;
-      state.permissions = action.payload.permissions || [];
-      // Don't store token in cookies - server already set HTTP-only cookie
+      state.role = role || user?.role || null;
+      state.permissions = permissions || user?.permissions || [];
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.isLoading = action.payload;
