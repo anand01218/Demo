@@ -32,7 +32,7 @@ const CandidateGridView: React.FC<CandidateGridViewProps> = ({
   const [activeId, setActiveId] = useState<string | null>(null);
   const [overId, setOverId] = useState<string | null>(null);
 
-  const { data } = useGetRecruitmentStageQuery(undefined);
+  const { data, isLoading } = useGetRecruitmentStageQuery(undefined);
   const recruitmentStages: RecruitmentStage[] = data;
 
   React.useEffect(() => {
@@ -133,6 +133,10 @@ const CandidateGridView: React.FC<CandidateGridViewProps> = ({
   const activeDragCandidate = activeId
     ? candidates.find((c) => c.id === activeId)
     : null;
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>
