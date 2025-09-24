@@ -183,12 +183,8 @@ const EmployeeAttendanceTable = () => {
     [currentPage, pageSize]
   );
 
-  const {
-    data: attendanceResponse,
-    // eslint-disable-next-line no-unused-vars -- Reserved for future error handling implementation
-    error,
-    isLoading,
-  } = useGetAllAttendanceQuery(queryParams);
+  const { data: attendanceResponse, isLoading } =
+    useGetAllAttendanceQuery(queryParams);
 
   const { data: monthlyAttendanceResponse, isLoading: isMonthlyLoading } =
     useGetMonthlyAttendanceQuery({
