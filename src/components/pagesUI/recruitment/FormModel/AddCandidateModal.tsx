@@ -103,11 +103,8 @@ const AddCandidateModal: React.FC<AddCandidateModalProps> = ({
         onCandidateAdded();
       }
 
-      // Close modal (you might need to trigger this differently based on your modal implementation)
-      const modalElement = document.getElementById("add-candidate-modal");
-      if (modalElement) {
-        modalElement.click(); // This might close the modal, adjust as needed
-      }
+      // Close modal
+      modaleClose();
     } catch (err: any) {
       // console.error("Error adding candidate:", err);
 
@@ -208,7 +205,14 @@ const AddCandidateModal: React.FC<AddCandidateModalProps> = ({
           disabled={isSubmitting || isLoading}
           className="px-4 py-2 bg-blue-600 transition-color hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 text-white rounded-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
         >
-          {isSubmitting ? <>Adding...</> : "Add Candidate"}
+          {isSubmitting ? (
+            <>
+              <div className="animate-spin h-8 w-8 xs:h-10 xs:w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 rounded-full border-b-2 border-blue-600" />
+              Adding...
+            </>
+          ) : (
+            "Add Candidate"
+          )}
         </button>
       )}
     >
@@ -356,3 +360,11 @@ const AddCandidateModal: React.FC<AddCandidateModalProps> = ({
 };
 
 export default AddCandidateModal;
+function modaleClose() {
+  // Close the modal by dispatching a custom event
+  const modal = document.getElementById("add-candidate-modal");
+  if (modal) {
+    // If your modal uses a custom event to close
+    modal.dispatchEvent(new CustomEvent("close"));
+  }
+}

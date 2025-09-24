@@ -1,7 +1,11 @@
 "use client";
 import React from "react";
-import { X, Calendar, User, FileText } from "lucide-react";
+import { X, Calendar, User, FileText, Pencil, Trash } from "lucide-react";
+import { useModale } from "@/context/ModaleContext";
 import { Candidate } from "@/interface/recruitment.interface";
+import { candidateDataService } from "@/data/recruitment/candidate-data";
+import { toast } from "sonner";
+import SmallModal from "@/components/elements/base-ui/modals/SmallModal";
 
 interface ViewNotesModalProps {
   open: boolean;
@@ -14,6 +18,7 @@ const ViewNotesModal: React.FC<ViewNotesModalProps> = ({
   onClose,
   candidate,
 }) => {
+  const { modaleShow } = useModale();
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {
@@ -27,9 +32,31 @@ const ViewNotesModal: React.FC<ViewNotesModalProps> = ({
 
   if (!open || !candidate) return null;
 
+  const handleDeleteNote = (noteId: string) => {
+    SmallModal.confirm({
+      title: "Delete Note?",
+      content: `Are you sure you want to delete this note?`,
+      confirmText: "Delete",
+      cancelText: "Cancel",
+      variant: "danger",
+      onConfirm: () => {
+        handleDeleteNoteConfirm(noteId);
+      },
+    });
+  };
+
+  const handleDeleteNoteConfirm = (noteId: string) => {
+    candidateDataService.deleteNote(candidate.id, noteId);
+    toast.success("Note deleted successfully");
+    onClose();
+  };
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="fixed inset-0 bg-black bg-opacity-50" onClick={onClose} />
+    <div className="fixed inset-0 z-40 flex items-center justify-center">
+      <div
+        className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm"
+        onClick={onClose}
+      />
       <div className="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-2xl mx-4 max-h-[80vh] flex flex-col">
         <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-600">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
@@ -55,6 +82,31 @@ const ViewNotesModal: React.FC<ViewNotesModalProps> = ({
                     <h4 className="font-semibold text-gray-900 dark:text-gray-100">
                       {note.title}
                     </h4>
+                    <div className="flex items-center space-x-2">
+                      <button
+                        type="button"
+                        className="text-blue-500 hover:text-blue-700 p-1 rounded-full"
+                        title="Edit Note"
+                        onClick={() =>
+                          modaleShow("note-modal", {
+                            ...note,
+                            candidateId: candidate.id,
+                          })
+                        }
+                      >
+                        <Pencil size={16} />
+                      </button>
+                      <button
+                        type="button"
+                        className="text-red-500 hover:text-red-700 p-1 rounded"
+                        title="Delete Note"
+                        onClick={() => {
+                          handleDeleteNote(note.id);
+                        }}
+                      >
+                        <Trash size={16} />
+                      </button>
+                    </div>
                   </div>
 
                   <p className="text-gray-700 dark:text-gray-300 mb-3 whitespace-pre-wrap">

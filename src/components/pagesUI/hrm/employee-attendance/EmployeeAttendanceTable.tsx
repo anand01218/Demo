@@ -98,6 +98,7 @@ type TableColumn<T> = {
 };
 
 const columns = (
+  // eslint-disable-next-line no-unused-vars -- Function signature requires parameter name
   handleEdit: (record: AttendanceRecord) => void
 ): TableColumn<AttendanceRecord>[] => [
   {
@@ -136,7 +137,7 @@ const columns = (
   {
     key: "action",
     label: "Action",
-    render: (_unused, row) => (
+    render: (_value, row) => (
       <div className="py-2 flex gap-2">
         <button className="text-red-600 hover:bg-red-50 rounded-lg transition-colors">
           <i className="fa-solid fa-trash" />
@@ -183,8 +184,12 @@ const EmployeeAttendanceTable = () => {
     [currentPage, pageSize]
   );
 
-  const { data: attendanceResponse, isLoading } =
-    useGetAllAttendanceQuery(queryParams);
+  const {
+    data: attendanceResponse,
+    // eslint-disable-next-line no-unused-vars -- Reserved for future error handling implementation
+    error,
+    isLoading,
+  } = useGetAllAttendanceQuery(queryParams);
 
   const { data: monthlyAttendanceResponse, isLoading: isMonthlyLoading } =
     useGetMonthlyAttendanceQuery({
@@ -249,12 +254,12 @@ const EmployeeAttendanceTable = () => {
     return `${hours.padStart(2, "0")}:${minutes}`;
   };
 
-  const handleEdit = (_record: AttendanceRecord) => {
-    setSelectedRecord(_record);
+  const handleEdit = (record: AttendanceRecord) => {
+    setSelectedRecord(record);
     setUpdateData({
-      checkIn: convertTo24Hour(_record.checkIn),
-      checkOut: convertTo24Hour(_record.checkOut),
-      status: _record.status,
+      checkIn: convertTo24Hour(record.checkIn),
+      checkOut: convertTo24Hour(record.checkOut),
+      status: record.status,
     });
     setShowUpdateModal(true);
   };
