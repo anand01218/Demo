@@ -16,22 +16,35 @@ export const DirectionProvider = ({
   children: React.ReactNode;
 }) => {
   const [direction, setDirection] = useState("ltr");
+  const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
-    const storedDirection = localStorage.getItem("direction");
-    if (storedDirection) {
-      setDirection(storedDirection);
-      document.documentElement.setAttribute("dir", storedDirection);
-    } else {
-      localStorage.setItem("direction", "ltr");
+    // Mark as hydrated after first render
+    setIsHydrated(true);
+    
+    // Only access localStorage after hydration
+    if (typeof window !== 'undefined') {
+      const storedDirection = localStorage.getItem("direction");
+      if (storedDirection && (storedDirection === "ltr" || storedDirection === "rtl")) {
+        setDirection(storedDirection);
+        document.documentElement.setAttribute("dir", storedDirection);
+      } else {
+        localStorage.setItem("direction", "ltr");
+        document.documentElement.setAttribute("dir", "ltr");
+      }
     }
-  }, [setDirection]);
+  }, []);
 
   const toggleDirection = () => {
+    if (!isHydrated) return; // Prevent action before hydration
+    
     const newDirection = direction === "ltr" ? "rtl" : "ltr";
     setDirection(newDirection);
-    localStorage.setItem("direction", newDirection);
-    document.documentElement.setAttribute("dir", newDirection);
+    
+    if (typeof window !== 'undefined') {
+      localStorage.setItem("direction", newDirection);
+      document.documentElement.setAttribute("dir", newDirection);
+    }
   };
 
   const contextValue: DirectionContextType = {
