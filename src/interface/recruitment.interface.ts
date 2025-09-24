@@ -40,27 +40,18 @@ export interface EmailData {
 
 export interface CandidateGridViewProps {
   searchTerm: string;
-  // eslint-disable-next-line no-unused-vars
-  onEmailCandidate: (_candidate: Candidate) => void;
-  // eslint-disable-next-line no-unused-vars
-  onAddNote: (_candidate: Candidate) => void;
-  // eslint-disable-next-line no-unused-vars
-  onViewNotes: (_candidate: Candidate) => void;
-  // eslint-disable-next-line no-unused-vars
-  onViewResume: (_resumeUrl: string) => void;
 }
 
 export interface SortableCandidateCardProps {
   candidate: Candidate;
-  // eslint-disable-next-line no-unused-vars
-  onEmailCandidate: (_candidate: Candidate) => void;
-  // eslint-disable-next-line no-unused-vars
-  onAddNote: (_candidate: Candidate) => void;
-  // eslint-disable-next-line no-unused-vars
-  onViewNotes: (_candidate: Candidate) => void;
-  // eslint-disable-next-line no-unused-vars
-  onViewResume: (_resumeUrl: string) => void;
   isLastStage?: boolean;
+}
+
+export interface DroppableStageProps {
+  stage: RecruitmentStage;
+  candidates: Candidate[];
+  isOver: boolean;
+  lastStageId?: string;
 }
 
 export type ViewMode = "table" | "grid";

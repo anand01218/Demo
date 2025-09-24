@@ -207,7 +207,7 @@ const sidebarData: SidebarCategory[] = [
               },
               {
                 label: "Welcome Package",
-                link: "/settings/onboarding/welcome-package",
+                link: "/settings/onboarding/template-model",
                 permission: PERMISSIONS.ADMIN_MANAGE_ANY,
               },
             ],

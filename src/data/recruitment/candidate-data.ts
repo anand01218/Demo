@@ -1,5 +1,5 @@
 "use client";
-import { Candidate } from "@/interface/recruitment.interface";
+import { Candidate, CandidateNote } from "@/interface/recruitment.interface";
 
 class CandidateDataService {
   private candidates: Candidate[] = [];
@@ -13,7 +13,7 @@ class CandidateDataService {
         try {
           this.candidates = JSON.parse(stored);
         } catch (error) {
-          // console.error("Error loading candidates from localStorage:", error);
+          // console.error('Error loading candidates from localStorage:', error);
           this.candidates = [];
         }
       }
@@ -66,6 +66,44 @@ class CandidateDataService {
       Object.assign(candidate, updates);
       this.saveToStorage();
       // console.log(`Candidate ${candidateId} updated`);
+    }
+  }
+
+  public addNote(candidateId: string, note: CandidateNote): void {
+    const candidate = this.candidates.find((c) => c.id === candidateId);
+    if (candidate) {
+      if (!candidate.notes) {
+        candidate.notes = [];
+      }
+      candidate.notes.push(note);
+      this.saveToStorage();
+      // console.log(`Note added to candidate ${candidateId}`);
+    }
+  }
+
+  public updateNote(candidateId: string, updatedNote: CandidateNote): void {
+    const candidate = this.candidates.find((c) => c.id === candidateId);
+    if (candidate && candidate.notes) {
+      const noteIndex = candidate.notes.findIndex(
+        (note) => note.id === updatedNote.id
+      );
+      if (noteIndex !== -1) {
+        candidate.notes[noteIndex] = updatedNote;
+        this.saveToStorage();
+        // console.log(`Note ${updatedNote.id} updated for candidate ${candidateId}`);
+      }
+    }
+  }
+
+  public deleteNote(candidateId: string, noteId: string): void {
+    const candidate = this.candidates.find((c) => c.id === candidateId);
+    if (candidate && candidate.notes) {
+      const noteIndex = candidate.notes.findIndex((note) => note.id === noteId);
+      if (noteIndex !== -1) {
+        candidate.notes.splice(noteIndex, 1);
+        this.saveToStorage();
+        // console.log(`Note ${noteId} deleted from candidate ${candidateId}`);
+      }
     }
   }
 
